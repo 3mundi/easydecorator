@@ -8,24 +8,15 @@ module EasyDecorator
     attributes_sorted.each do |attr, options|
       value = self.send(attr)
       value = decorate_by_type value, options
-      value = self.length(value, options[:length]) if options[:length]
+      value = Length.decorate(value, options[:length]) if options[:length]
       decorated[attr] = value
     end
     decorated
   end
 
   def decorate_by_type(value, options)
-    case options[:type]
-      when :datetime
-        value = self.datetime(value, options[:format])
-      when :timestamp
-        value = self.timestamp(value, options[:format])
-      when :money
-        value = self.to_decimal(value, options[:format], options[:delimiter])
-      else
-        value
-    end
-    value
+    raise 'Decorator not exist' unless class_exists? options[:type]
+    (options[:type]).decorate(value, options)
   end
 
   # this method just get attributes from the class and her parent direct
@@ -51,28 +42,6 @@ module EasyDecorator
     attributes = reject_the_last.sort_by { |_key, value| value[:position] }
     attributes += last_position.to_a
     attributes
-  end
-
-  def length(value, length)
-    value = '' if value.nil?
-    value.to_s.ljust(length, ' ')[0, length]
-  end
-
-  def timestamp(value, format)
-    return '' if value.nil?
-    time = Time.zone.at(value.to_i)
-    time.strftime(format).to_s
-  end
-
-  def datetime(value, format)
-    return '' if value.nil?
-    value.strftime(format).to_s
-  end
-
-  def to_decimal(value, format, delimiter)
-    return '0' if value.nil?
-    value = value.to_f / 100
-    format(format, value).gsub '.', delimiter
   end
 
   module ClassMethods

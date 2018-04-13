@@ -8,9 +8,9 @@ class ExampleModel
 
   decorate :name, length: 3, position: 1
   decorate :description, length: 200, position: :last
-  decorate :create_at_timestamp, format: DATETIME_FORMAT, type: :timestamp, length: 5, position: 3
-  decorate :date, format: DATETIME_FORMAT, type: :date, length: 5, position: 2
-  decorate :price, format: MONEY_FORMAT, delimiter: ',', type: :money, length: 4, position: 4
+  decorate :create_at_timestamp, format: DATETIME_FORMAT, type: EasyDecorator::Timestamp, length: 5, position: 3
+  decorate :date, format: DATETIME_FORMAT, type: EasyDecorator::DateTime, length: 5, position: 2
+  decorate :price, format: MONEY_FORMAT, delimiter: ',', type: EasyDecorator::ToDecimal, length: 4, position: 4
 
   def initialize(name:, date:, price:, create_at_timestamp:, description:)
     self.name = name
